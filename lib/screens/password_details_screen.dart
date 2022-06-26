@@ -71,20 +71,22 @@ class PasswordScreen extends StatelessWidget {
     return FutureBuilder(
         future: FirebaseApi.getPasswordByDocID(docId),
         initialData: Password(
-            docId: ' ',
-            category: ' ',
-            email: ' ',
-            icon: ' ',
-            lastUpdated: ' ',
-            password: ' ',
-            url: ' ',
-            websiteName: ' '),
+          docId: ' ',
+          category: ' ',
+          email: ' ',
+          icon: ' ',
+          lastUpdated: ' ',
+          password: ' ',
+          url: ' ',
+          websiteName: ' ',
+          id: ' ',
+        ),
         builder: (BuildContext context, AsyncSnapshot<Password> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return const Center(
+          //     child: CircularProgressIndicator(),
+          //   );
+          // }
 
           if (!snapshot.hasData) {
             return const Center(

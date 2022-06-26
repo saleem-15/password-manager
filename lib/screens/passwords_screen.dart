@@ -30,7 +30,12 @@ class PasswordScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const PasswordsList()
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              padding: const EdgeInsets.all(8.0),
+              child: const PasswordsList(),
+            )
           ],
         ),
       ),

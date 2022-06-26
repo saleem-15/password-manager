@@ -1,8 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:password_manager/api/firebase_api.dart';
 
+part 'category.g.dart';
+
+@HiveType(typeId: 2)
 class Category {
+
+    @HiveField(0)
   String name;
+
+    @HiveField(1)
   String icon;
 
   Category({

@@ -32,13 +32,15 @@ class FirebaseApi {
     String category,
     String emailOrUsername,
     String password,
+    Timestamp lastUpdated,
+    String id,
   ) async {
-    await db.collection('users').doc(myUid).collection('passwords').add({
+    await db.collection('users').doc(myUid).collection('passwords').doc(id).set({
       'website_name': websiteName,
       'url': url,
       'email': emailOrUsername,
       'password': password,
-      'last_update': Timestamp.now(),
+      'last_update': lastUpdated,
       'category': category
     });
     return;
@@ -61,6 +63,7 @@ class FirebaseApi {
       password: doc['password'],
       lastUpdated: Utils.formatDate(doc['last_update']),
       category: doc['category'],
+      id: doc.id,
     );
 
     return password;
@@ -145,7 +148,9 @@ class FirebaseApi {
           lastUpdated: Utils.formatDate(password['last_update'] as Timestamp),
           icon: 'lib/assets/facebook.png',
           docId: password.id,
-          category: password['category']);
+          category: password['category'],
+          id: password.id,
+          );
 
       passwordsList.add(p);
     });

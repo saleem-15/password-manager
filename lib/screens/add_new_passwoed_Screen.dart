@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_password_strength/flutter_password_strength.dart';
 import 'package:password_manager/helpers/colors.dart';
@@ -20,6 +21,7 @@ class _AddNewPasswordScreenState extends State<AddNewPasswordScreen> {
   TextEditingController passwordController = TextEditingController();
 
   TextEditingController categoryController = TextEditingController();
+  late Timestamp _timestamp;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,7 +93,6 @@ class _AddNewPasswordScreenState extends State<AddNewPasswordScreen> {
               const SizedBox(height: 10),
               TextFormField(
                 controller: passwordController,
-                onChanged: (value) => initState(),
                 decoration: const InputDecoration(
                   labelText: 'Password',
                   constraints: BoxConstraints(maxHeight: 50),
@@ -106,7 +107,6 @@ class _AddNewPasswordScreenState extends State<AddNewPasswordScreen> {
               const SizedBox(height: 10),
               TextFormField(
                 controller: categoryController,
-                onChanged: (value) => initState(),
                 decoration: const InputDecoration(
                   labelText: 'Category',
                   constraints: BoxConstraints(maxHeight: 50),
@@ -153,12 +153,17 @@ class _AddNewPasswordScreenState extends State<AddNewPasswordScreen> {
                     final url = urlController.text.trim();
                     final category = categoryController.text.trim();
 
+                    _timestamp = Timestamp.now();
+                    final id = _timestamp.toString();
+
                     PasswordsProvider().addNewPassword(
                       websiteName,
                       url,
                       category,
                       websiteEmail,
                       password,
+                      _timestamp,
+                      id,
                     );
 
                     passwordController.clear();

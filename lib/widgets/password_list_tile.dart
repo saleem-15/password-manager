@@ -22,12 +22,13 @@ class PasswordTile extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => PasswordScreen(
-                  docId: docId,
-                )));
+          builder: (context) => PasswordScreen(
+            docId: docId,
+          ),
+        ));
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
+        height: 70,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),

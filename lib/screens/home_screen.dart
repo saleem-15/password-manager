@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     makeStatusBarTransparent();
-    Provider.of<PasswordsProvider>(context).getAllPasswords();
+    Provider.of<PasswordsProvider>(context).getPasswords();
 
     return ChangeNotifierProvider(
       create: (context) => PasswordsProvider(),
@@ -58,7 +58,8 @@ class HomeScreen extends StatelessWidget {
                                 }
 
                                 return Text(
-                                  snapshot.data ?? 'soso',
+                                  //name of the user
+                                  snapshot.data ?? '',
                                   style: const TextStyle(color: lightGrey),
                                 );
                               },
@@ -108,7 +109,9 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  const PasswordsList()
+                  const Expanded(
+                    child: PasswordsList(),
+                  )
                 ],
               ),
             ),
