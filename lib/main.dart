@@ -1,15 +1,18 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:password_manager/controllers/category_controller.dart';
 import 'package:password_manager/models/category.dart';
 import 'package:password_manager/screens/auth_screen.dart';
 import 'package:password_manager/screens/home_screen.dart';
 import 'package:password_manager/screens/passwords_screen.dart';
-import 'package:provider/provider.dart';
 
+import 'controllers/password_controller.dart';
 import 'helpers/colors.dart';
 import 'models/password.dart';
 import 'screens/add_new_passwoed_Screen.dart';
@@ -21,11 +24,10 @@ Future<void> main() async {
   await Firebase.initializeApp();
   Hive.registerAdapter(PasswordAdapter());
   Hive.registerAdapter(CategoryAdapter());
-  
+
   await Hive.openBox<Password>('passwords_box');
   await Hive.openBox<Category>('categories_box');
   await Hive.openBox('box');
-
 
   runApp(const MyApp());
 }
@@ -50,17 +52,7 @@ class MyApp extends StatelessWidget {
             return const CircularProgressIndicator();
           }
           if (snapshot.hasData) {
-            return MultiProvider(
-              providers: [
-                ChangeNotifierProvider<PasswordsProvider>(
-                  create: (context) => PasswordsProvider(),
-                ),
-                ChangeNotifierProvider<CategoryProvider>(
-                  create: (context) => CategoryProvider(),
-                ),
-              ],
-              builder: (_, child) => const App(),
-            );
+            return const App();
           }
 
           return const AuthScreen();
@@ -79,10 +71,9 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+
   static List<Widget> screens = <Widget>[
-    HomeScreen(),
+    const HomeScreen(),
     const PasswordScreen(),
   ];
 
@@ -94,15 +85,17 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
+    //define controllers
+    Get.put(PasswordController());
+    Get.put(CategoryController());
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: _selectedIndex == 1
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).primaryColor,
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const AddNewPasswordScreen(),
-                ));
+                Get.to(const AddNewPasswordScreen());
               },
               child: const Icon(Icons.add),
             )

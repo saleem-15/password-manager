@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:password_manager/controllers/password_controller.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 import '../helpers/colors.dart';
@@ -34,16 +36,18 @@ class PasswordsAnalytics extends StatelessWidget {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    '22',
-                    style: TextStyle(fontSize: 22),
+                    Get.find<PasswordController>()
+                        .numOfSimilarPasswords()
+                        .toString(),
+                    style: const TextStyle(fontSize: 22),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
-                  Text(
-                    'Compromized',
+                  const Text(
+                    'Reused',
                     style: TextStyle(
                       fontSize: 18,
                       color: lightGreen,

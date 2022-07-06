@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:password_manager/controllers/password_controller.dart';
 
 import '../widgets/passwords_list.dart';
 import '../helpers/colors.dart';
@@ -8,6 +10,7 @@ class PasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.find<PasswordController>().numOfSimilarPasswords();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(top: 80, left: 15, right: 15),
@@ -30,11 +33,8 @@ class PasswordScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 300,
-              padding: const EdgeInsets.all(8.0),
-              child: const PasswordsList(),
+            const Expanded(
+              child: PasswordsList(),
             )
           ],
         ),

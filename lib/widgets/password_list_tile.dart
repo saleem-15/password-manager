@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:password_manager/screens/password_details_screen.dart';
 
 class PasswordTile extends StatelessWidget {
-  PasswordTile(
+  const PasswordTile(
       {required this.websiteName,
       required this.email,
       required this.icon,
@@ -10,22 +11,18 @@ class PasswordTile extends StatelessWidget {
       required this.docId,
       required this.password,
       super.key});
-  String icon;
-  String websiteName;
-  String email;
-  String password;
-  String lastUpdate;
-  String docId;
+  final String icon;
+  final String websiteName;
+  final String email;
+  final String password;
+  final String lastUpdate;
+  final String docId;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => PasswordScreen(
-            docId: docId,
-          ),
-        ));
+        Get.to(() => PasswordDetailsScreen(docId: docId));
       },
       child: Container(
         height: 70,

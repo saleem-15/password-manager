@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../models/password.dart';
+import '../controllers/password_controller.dart';
 import 'password_list_tile.dart';
 
 class PasswordsList extends StatelessWidget {
@@ -8,29 +9,23 @@ class PasswordsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: PasswordsProvider().getPasswords(),
-      builder: (BuildContext context, AsyncSnapshot<List<Password>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text('There is no passwords'),
-          );
-        }
+    return GetX<PasswordController>(
+      builder: (controller) {
         return ListView(
-          
-          children: snapshot.data!
-              .map((e) => PasswordTile(
+          children: controller.passwordsList
+              .map(
+                (e) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: PasswordTile(
                     lastUpdate: e.lastUpdated,
                     password: e.password,
                     email: e.email,
                     icon: e.icon,
-                    docId: e.docId,
+                    docId: e.id,
                     websiteName: e.websiteName,
-                  ))
+                  ),
+                ),
+              )
               .toList(),
         );
       },

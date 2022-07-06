@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:password_manager/api/firebase_api.dart';
-import 'package:password_manager/screens/passwords_screen.dart';
+import 'package:get/get.dart';
+import 'package:password_manager/controllers/password_controller.dart';
 
 import '../screens/category_passwords_screen .dart';
 
-class CategoryWidget extends StatelessWidget {
-  const CategoryWidget({required this.categoryName, super.key});
+class CategoryTile extends StatelessWidget {
+  const CategoryTile({required this.categoryName, super.key});
   final String categoryName;
 
   @override
   Widget build(BuildContext context) {
-    var myIcon = Icons.home;
-    var numPassword = 10;
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: 
-        (context) => CategoryPasswordScreen(categoryName: categoryName,)));
+        Get.to(CategoryPasswordScreen(categoryName: categoryName));
       },
       child: Container(
         height: 100,
         width: 110,
-        margin: const EdgeInsets.only(right: 20),
         padding: const EdgeInsets.symmetric(
           vertical: 12,
           horizontal: 10,
@@ -50,22 +46,11 @@ class CategoryWidget extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            FutureBuilder(
-              future: FirebaseApi.getNumOfPasswordsInCategory(categoryName),
-              initialData: '',
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return Text(
-                    '${snapshot.data} passwords',
-                    style: TextStyle(color: Colors.grey[500]),
-                  );
-                }
-    
-                return Text(
-                  '100 passwords',
-                  style: TextStyle(color: Colors.grey[500]),
-                );
-              },
+            Text(
+              Get.find<PasswordController>()
+                  .getNumOfPasswordsInCategory(categoryName)
+                  .toString(),
+              style: TextStyle(color: Colors.grey[500]),
             ),
           ],
         ),

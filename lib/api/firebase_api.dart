@@ -56,7 +56,6 @@ class FirebaseApi {
 
     final password = Password(
       websiteName: doc['website_name'],
-      docId: doc.id,
       icon: 'lib/assets/google.png',
       email: doc['email'],
       url: doc['url'],
@@ -70,7 +69,6 @@ class FirebaseApi {
   }
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllPasswords() {
-    List<Password> passwordsList = [];
     final passwordsStream =
         db.collection('users').doc(myUid).collection('passwords').snapshots();
 
@@ -147,7 +145,6 @@ class FirebaseApi {
           password: password['password'],
           lastUpdated: Utils.formatDate(password['last_update'] as Timestamp),
           icon: 'lib/assets/facebook.png',
-          docId: password.id,
           category: password['category'],
           id: password.id,
           );

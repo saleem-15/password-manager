@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:password_manager/controllers/category_controller.dart';
 import 'package:password_manager/helpers/colors.dart';
-import 'package:password_manager/models/category.dart';
-import 'package:provider/provider.dart';
 
 class AddNewCategory extends StatefulWidget {
-   AddNewCategory({required this.ctx,super.key});
-  BuildContext ctx;
+  const AddNewCategory({super.key});
   //static const route = '/add new category';
 
   @override
@@ -76,8 +75,8 @@ class _AddNewCategoryState extends State<AddNewCategory> {
                   onPressed: () {
                     final name = nameController.text.trim();
 
-                    Provider.of<CategoryProvider>(widget.ctx, listen: false)
-                        .addNewCategory(name);
+                    Get.find<CategoryController>()
+                        .addNewCategory(name, 'lib/assets/people.png');
 
                     nameController.clear();
                   },

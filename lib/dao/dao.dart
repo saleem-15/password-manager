@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:password_manager/api/firebase_api.dart';
@@ -40,7 +42,6 @@ class Dao {
     final p = Password(
       category: category,
       email: emailOrUsername,
-      docId: id,
       icon: 'lib/assets/google.png',
       lastUpdated: Utils.formatDate(lastUpdated),
       password: password,
@@ -49,15 +50,51 @@ class Dao {
       id: id,
     );
 
-    return await passwordsBox.put('s', p);
+    return await passwordsBox.put(p.id, p);
   }
 
   Future<void> deletePassword(String id) async {
     return await passwordsBox.delete(id);
   }
 
-  Future<List<Password>> getAllPasswords() async {
-    final x = await passwordsBox.values.toList();
-    return x;
+  List<Password> getAllPasswords() {
+    return passwordsBox.values.toList();
+  }
+
+  Password? getPasswordById(String docId) {
+    final results = passwordsBox.values.where((p) => p.id == docId);
+    final Password? password = results.isEmpty ? null : results.first;
+    return password;
+  }
+
+// *************************** CATEGORIES ******************************
+  List<Category> getAllCategories() {
+    return categoryBox.values.toList();
+  }
+
+  Future<void> addCategory(String name, String icon) async {
+    final category = Category(name: name, icon: icon);
+    return await categoryBox.put(name, category);
+  }
+
+  Future<void> deleteCategory(String name) async {
+    return await categoryBox.delete(name);
+  }
+
+  Category? getCategoryByName(String name) {
+    final results = categoryBox.values.where((p) => p.name == name);
+    final Category? category = results.isEmpty ? null : results.first;
+    return category;
+  }
+
+  void deleteCategoryPasswords(String categortName) {
+    final newPasswordsList = passwordsBox.values.toList()
+      ..removeWhere((element) => element.category == categortName);
+
+    passwordsBox.clear();
+
+    for (final password in newPasswordsList) {
+      passwordsBox.put(password.id, password);
+    }
   }
 }

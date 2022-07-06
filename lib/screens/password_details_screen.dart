@@ -1,30 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:password_manager/api/firebase_api.dart';
+import 'package:get/get.dart';
+import 'package:password_manager/controllers/password_controller.dart';
 import 'package:password_manager/models/password.dart';
 
 import '../helpers/colors.dart';
 
-class PasswordScreen extends StatelessWidget {
-  PasswordScreen(
-      {
-      // required this.websiteName,
-      // required this.lastUpdated,
-      // required this.password,
-      // required this.icon,
-      // required this.email,
-      required this.docId,
-      super.key});
-  // String websiteName;
-  // String icon;
-  // String password;
-  // String lastUpdated;
-  // String email;
-  String docId;
+class PasswordDetailsScreen extends StatelessWidget {
+  const PasswordDetailsScreen({required this.docId, super.key});
 
+  final String docId;
+
+  /*
   final LocalAuthentication auth = LocalAuthentication();
 
   Future<bool> checkIsThereFingerprint() async {
@@ -63,15 +51,18 @@ class PasswordScreen extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    checkIsThereFingerprint().then((value) => value
+  checkIsThereFingerprint().then((value) => value
         ? fingerprint()
         : FirebaseFirestore.instance.collection('is not supported').add({}));
-    return FutureBuilder(
-        future: FirebaseApi.getPasswordByDocID(docId),
+  */
+
+  @override
+  Widget build(BuildContext context) {
+    final passwordController = Get.find<PasswordController>();
+
+    return FutureBuilder<Password?>(
+        future: passwordController.getPasswordByDocID(docId),
         initialData: Password(
-          docId: ' ',
           category: ' ',
           email: ' ',
           icon: ' ',
@@ -81,7 +72,7 @@ class PasswordScreen extends StatelessWidget {
           websiteName: ' ',
           id: ' ',
         ),
-        builder: (BuildContext context, AsyncSnapshot<Password> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Password?> snapshot) {
           // if (snapshot.connectionState == ConnectionState.waiting) {
           //   return const Center(
           //     child: CircularProgressIndicator(),
@@ -195,8 +186,8 @@ class PasswordScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () async {
-                          await PasswordsProvider().deletePassword(docId);
-                          Navigator.of(context).pop();
+                          await passwordController.deletePassword(docId);
+                          Get.back();
                         },
                         child: Text(
                           'Delete',
