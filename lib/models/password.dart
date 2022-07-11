@@ -19,24 +19,21 @@ class Password {
   @HiveField(4)
   String lastUpdated;
 
+  // @HiveField(5)
+  // String url;
+
+
+
   @HiveField(5)
-  String url;
-
-  // @HiveField(6)
-  // String docId;
-
-  @HiveField(6)
   String category;
 
-  @HiveField(7)
+  @HiveField(6)
   String id;
 
   Password({
     required this.websiteName,
-  //  required this.docId,
     required this.icon,
     required this.email,
-    required this.url,
     required this.password,
     required this.lastUpdated,
     required this.category,

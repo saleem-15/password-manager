@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:password_manager/controllers/password_controller.dart';
 
+import '../controllers/password_controller.dart';
 import '../screens/category_passwords_screen .dart';
 
 class CategoryTile extends StatelessWidget {
@@ -12,7 +12,7 @@ class CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(CategoryPasswordScreen(categoryName: categoryName));
+        Get.to(() => CategoryPasswordScreen(categoryName: categoryName));
       },
       child: Container(
         height: 100,
@@ -47,9 +47,7 @@ class CategoryTile extends StatelessWidget {
               height: 12,
             ),
             Text(
-              Get.find<PasswordController>()
-                  .getNumOfPasswordsInCategory(categoryName)
-                  .toString(),
+              '${Get.find<PasswordController>().getNumOfPasswordsInCategory(categoryName).toString()} passwords',
               style: TextStyle(color: Colors.grey[500]),
             ),
           ],

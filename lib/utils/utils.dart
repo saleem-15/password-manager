@@ -5,12 +5,8 @@ import 'package:intl/intl.dart';
 
 class Utils {
   static String formatDate(Timestamp time) {
-    final myTimeFormat = DateFormat('d/m/y');
+    final myTimeFormat = DateFormat('d/M/y');
 
     return myTimeFormat.format((time).toDate());
   }
-
-
-  
-
 }

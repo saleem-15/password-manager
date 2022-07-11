@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 
 import '../api/firebase_api.dart';
 import '../widgets/auth_form.dart';
@@ -12,7 +13,7 @@ class AuthScreen extends StatefulWidget {
   AuthScreenState createState() => AuthScreenState();
 }
 
-class AuthScreenState extends State<AuthScreen> {
+class AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateMixin {
   final _auth = FirebaseAuth.instance;
   var isLoading = false;
 
@@ -23,7 +24,7 @@ class AuthScreenState extends State<AuthScreen> {
     bool isLogin,
   ) async {
     UserCredential authResult;
-
+/*
     // try {
     //   setState(() {
     //     isLoading = true;
@@ -62,20 +63,31 @@ class AuthScreenState extends State<AuthScreen> {
     //     });
     //   }
     // }
+
+    */
     try {
       setState(() {
         isLoading = true;
       });
+
       if (isLogin) {
         authResult = await _auth.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
       } else {
+        //new Account
         authResult = await _auth.createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
+                await FirebaseApi.addNewUser(username, authResult.user!.uid, email);
+
+
+
+
+
+        /*
 
         // final ref = FirebaseStorage.instance
         //     .ref()
@@ -85,58 +97,65 @@ class AuthScreenState extends State<AuthScreen> {
         // await ref.putFile(image!).whenComplete(() => null);
 
         // final url = await ref.getDownloadURL();
+        */
 
-        await FirebaseApi.addNewUser(username, authResult.user!.uid, email);
       }
-    } on PlatformException catch (error) {
-      var msg = 'An error occured, please check your credentials!';
+    } on FirebaseAuthException catch (error) {
+      String msg;
       setState(() {
         isLoading = false;
       });
+      log(error.code);
 
-      if (error.message != null) {
-        msg = error.message!;
+      switch (error.code) {
+        case 'email-already-in-use':
+          msg = 'The email is already in use';
+          break;
+        case 'wrong-password':
+          msg = 'wrong password';
+          break;
+
+        case 'user-not-found':
+          msg = 'There is no user with this email';
+          break;
+
+        default:
+          msg = error.code;
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(msg),
           backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
-    } catch (error) {
-      setState(() {
-        isLoading = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-          backgroundColor: Theme.of(context).errorColor,
+          duration: const Duration(seconds: 7),
         ),
       );
     }
   }
 
+  var isEmailVerificationMode = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Colors.blue,
-                Colors.purple,
-                Colors.red,
-              ],
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.blue,
+                  Colors.purple,
+                  Colors.red,
+                ],
+              ),
             ),
           ),
-        ),
-        AuthForm(_submitAuthForm, isLoading)
-      ]),
+          AuthForm(_submitAuthForm, isLoading),
+        ],
+      ),
     );
   }
 }

@@ -1,16 +1,18 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:password_manager/controllers/password_controller.dart';
 
 import '../widgets/passwords_list.dart';
 import '../helpers/colors.dart';
 
 class PasswordScreen extends StatelessWidget {
-  const PasswordScreen({super.key});
+  PasswordScreen({super.key});
+  final searchController = TextEditingController();
+  var searchText = ''.obs;
 
   @override
   Widget build(BuildContext context) {
-    Get.find<PasswordController>().numOfSimilarPasswords();
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(top: 80, left: 15, right: 15),
@@ -23,6 +25,7 @@ class PasswordScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: TextField(
+                controller: searchController,
                 decoration: InputDecoration(
                   suffixIcon: Image.asset(
                     'lib/assets/search.png',
@@ -31,10 +34,15 @@ class PasswordScreen extends StatelessWidget {
                   hintText: 'Search',
                   border: InputBorder.none,
                 ),
+                onChanged: (value) => searchText.value = searchController.text,
               ),
             ),
-            const Expanded(
-              child: PasswordsList(),
+            Expanded(
+              child: Obx(
+                () => PasswordsList(
+                  searchText: searchText.value,
+                ),
+              ),
             )
           ],
         ),

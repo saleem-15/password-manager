@@ -3,14 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:password_manager/controllers/password_controller.dart';
-import 'package:password_manager/models/password.dart';
+import 'package:password_manager/screens/update_password_screen.dart';
 
 import '../helpers/colors.dart';
+import '../helpers/icons.dart';
 
 class PasswordDetailsScreen extends StatelessWidget {
-  const PasswordDetailsScreen({required this.docId, super.key});
+  const PasswordDetailsScreen({required this.id, super.key});
 
-  final String docId;
+  final String id;
 
   /*
   final LocalAuthentication auth = LocalAuthentication();
@@ -58,43 +59,30 @@ class PasswordDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final passwordController = Get.find<PasswordController>();
-
-    return FutureBuilder<Password?>(
-        future: passwordController.getPasswordByDocID(docId),
-        initialData: Password(
-          category: ' ',
-          email: ' ',
-          icon: ' ',
-          lastUpdated: ' ',
-          password: ' ',
-          url: ' ',
-          websiteName: ' ',
-          id: ' ',
-        ),
-        builder: (BuildContext context, AsyncSnapshot<Password?> snapshot) {
-          // if (snapshot.connectionState == ConnectionState.waiting) {
-          //   return const Center(
-          //     child: CircularProgressIndicator(),
-          //   );
-          // }
-
-          if (!snapshot.hasData) {
-            return const Center(
-              child: Text('No data'),
-            );
-          }
-          return Scaffold(
-            body: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: GetBuilder<PasswordController>(builder: (controller) {
+        final password = controller.getPasswordById(id);
+        final icon = SavedIcons.getIconPath(password.value.websiteName);
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 100,
+              ),
+              Row(
                 children: [
+                  if (icon != null)
+                    Image.asset(
+                      icon,
+                      scale: 2,
+                    ),
                   const SizedBox(
-                    height: 100,
+                    width: 30,
                   ),
                   Text(
-                    snapshot.data!.websiteName,
+                    password.value.websiteName,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 40,
@@ -102,123 +90,116 @@ class PasswordDetailsScreen extends StatelessWidget {
                       color: text_title_color,
                     ),
                   ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  const Icon(
-                    Icons.person,
-                    size: 35,
-                    color: iconColor,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(snapshot.data!.email),
-                  //
-                  const SizedBox(height: 30),
-                  //
-                  const Icon(
-                    Icons.link,
-                    size: 35,
-                    color: iconColor,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(snapshot.data!.url),
-                  //
-                  const SizedBox(height: 30),
-                  //
-                  const Icon(
-                    Icons.lock,
-                    size: 35,
-                    color: iconColor,
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(snapshot.data!.password),
-                      IconButton(
-                        icon: Image.asset(
-                          'lib/assets/copy.png',
-                          scale: 3,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        onPressed: () {
-                          Clipboard.setData(
-                              ClipboardData(text: snapshot.data!.password));
+                ],
+              ),
+              const SizedBox(
+                height: 50,
+              ),
 
-                          Fluttertoast.showToast(
-                            msg: "Password is copied!!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            fontSize: 16.0,
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                  //
-                  const SizedBox(height: 30),
-                  //
-                  const Icon(
-                    Icons.calendar_today,
-                    size: 30,
-                    color: iconColor,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(snapshot.data!.lastUpdated),
+              ///
+              const Icon(
+                Icons.person,
+                size: 35,
+                color: iconColor,
+              ),
 
-                  const Spacer(),
+              const SizedBox(height: 10),
+              Text(password.value.email),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      TextButton(
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                            const EdgeInsets.symmetric(horizontal: 50),
-                          ),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
-                                  width: 2,
-                                  color: Theme.of(context).primaryColor),
-                            ),
-                          ),
-                        ),
-                        onPressed: () async {
-                          await passwordController.deletePassword(docId);
-                          Get.back();
-                        },
-                        child: Text(
-                          'Delete',
-                          style:
-                              TextStyle(color: Theme.of(context).primaryColor),
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all(
-                            const EdgeInsets.symmetric(horizontal: 50),
-                          ),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                          ),
-                          backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).primaryColor),
-                        ),
-                        child: const Text('Update'),
-                        onPressed: () {},
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 50,
+              ///** */
+
+              const SizedBox(height: 40),
+
+              const Icon(
+                Icons.lock,
+                size: 35,
+                color: iconColor,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+//************************** PASSWORD TEXT HERE **********************************
+                  Text(password.value.password),
+                  IconButton(
+                    icon: Image.asset(
+                      'lib/assets/copy.png',
+                      scale: 3,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: password.value.password));
+
+                      Fluttertoast.showToast(
+                        msg: "Password is copied!!",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        fontSize: 16.0,
+                      );
+                    },
                   )
                 ],
               ),
-            ),
-          );
-        });
+              //
+              const SizedBox(height: 30),
+              //
+              const Icon(
+                Icons.calendar_today,
+                size: 30,
+                color: iconColor,
+              ),
+              const SizedBox(height: 10),
+              Text(password.value.lastUpdated),
+
+              const Spacer(),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 50),
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(width: 2, color: Theme.of(context).primaryColor),
+                        ),
+                      ),
+                    ),
+                    onPressed: () async {
+                      await controller.deletePassword(id);
+                      Get.back();
+                    },
+                    child: Text(
+                      'Delete',
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 50),
+                      ),
+                      shape: MaterialStateProperty.all(
+                        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      backgroundColor: MaterialStateProperty.all(Theme.of(context).primaryColor),
+                    ),
+                    child: const Text('Update'),
+                    onPressed: () {
+                      Get.to(() => UpdatePasswordScreen(id: id));
+                    },
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 50,
+              )
+            ],
+          ),
+        );
+      }),
+    );
   }
 }

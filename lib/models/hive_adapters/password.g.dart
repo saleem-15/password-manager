@@ -20,18 +20,17 @@ class PasswordAdapter extends TypeAdapter<Password> {
       websiteName: fields[0] as String,
       icon: fields[1] as String,
       email: fields[2] as String,
-      url: fields[5] as String,
       password: fields[3] as String,
       lastUpdated: fields[4] as String,
-      category: fields[6] as String,
-      id: fields[7] as String,
+      category: fields[5] as String,
+      id: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Password obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.websiteName)
       ..writeByte(1)
@@ -43,10 +42,8 @@ class PasswordAdapter extends TypeAdapter<Password> {
       ..writeByte(4)
       ..write(obj.lastUpdated)
       ..writeByte(5)
-      ..write(obj.url)
-      ..writeByte(6)
       ..write(obj.category)
-      ..writeByte(7)
+      ..writeByte(6)
       ..write(obj.id);
   }
 

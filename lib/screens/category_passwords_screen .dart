@@ -1,23 +1,35 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:password_manager/controllers/category_controller.dart';
 
 import '../controllers/password_controller.dart';
 import '../helpers/colors.dart';
-import '../widgets/password_list_tile.dart';
+import '../widgets/category_passwords_list.dart';
 
-class CategoryPasswordScreen extends StatelessWidget {
+class CategoryPasswordScreen extends StatefulWidget {
   const CategoryPasswordScreen({required this.categoryName, super.key});
+  ///this widget is stateful only to use the dispose method
 
   final String categoryName;
+
+  @override
+  State<CategoryPasswordScreen> createState() => _CategoryPasswordScreenState();
+}
+
+class _CategoryPasswordScreenState extends State<CategoryPasswordScreen> {
+  final searchController = TextEditingController();
+
+  var searchText = ''.obs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(categoryName),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
+        title: Text(widget.categoryName),
         centerTitle: true,
         actions: [
           //with tooltip and round border corner(if you also needed those)
@@ -34,8 +46,7 @@ class CategoryPasswordScreen extends StatelessWidget {
                 Get.defaultDialog(
                     titlePadding: const EdgeInsets.all(10),
                     content: const SizedBox.shrink(),
-                    title:
-                        'Are you sure you want to delete the category and all of its passwords',
+                    title: 'Are you sure you want to delete the category and all of its passwords',
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -51,11 +62,8 @@ class CategoryPasswordScreen extends StatelessWidget {
                         onPressed: () {
                           Get.back(); //get back from the dialog
                           Get.back(); //get back from the category screen that you have deleted
-                          Get.find<CategoryController>()
-                              .deleteCategory(categoryName);
-                          Get.find<PasswordController>()
-                              .deleteCategoryPasswords(categoryName);                              
-
+                          Get.find<CategoryController>().deleteCategory(widget.categoryName);
+                          Get.find<PasswordController>().deleteCategoryPasswords(widget.categoryName);
                         },
                       ),
                     ]
@@ -88,6 +96,7 @@ class CategoryPasswordScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextField(
+                  controller: searchController,
                   decoration: InputDecoration(
                     suffixIcon: Image.asset(
                       'lib/assets/search.png',
@@ -96,43 +105,31 @@ class CategoryPasswordScreen extends StatelessWidget {
                     hintText: 'Search',
                     border: InputBorder.none,
                   ),
+                  onChanged: (value) => searchText.value = searchController.text,
                 ),
               ),
             ),
-            GetX<PasswordController>(
-              builder: (controller) {
-                final passwords = controller.getCategoryPasswords(categoryName);
-
-                if (passwords.isEmpty) {
-                  return const Expanded(
-                    child: Center(child: Text('There is no passwords')),
-                  );
-                }
-
-                return Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 20),
-                    children: passwords
-                        .map((e) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: PasswordTile(
-                                lastUpdate: e.lastUpdated,
-                                password: e.password,
-                                email: e.email,
-                                icon: e.icon,
-                                docId: e.id,
-                                websiteName: e.websiteName,
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                );
-              },
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: Obx(
+                () => CategoryPasswordsList(
+                  categoryName: widget.categoryName,
+                  searchText: searchText.value,
+                ),
+              ),
             )
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
+    super.dispose();
   }
 }

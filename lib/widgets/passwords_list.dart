@@ -1,33 +1,54 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/password_controller.dart';
-import 'password_list_tile.dart';
+import 'password_tile.dart';
 
 class PasswordsList extends StatelessWidget {
-  const PasswordsList({super.key});
+  const PasswordsList({required this.searchText, super.key});
+  final String searchText;
 
   @override
   Widget build(BuildContext context) {
     return GetX<PasswordController>(
       builder: (controller) {
-        return ListView(
-          children: controller.passwordsList
-              .map(
-                (e) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PasswordTile(
-                    lastUpdate: e.lastUpdated,
-                    password: e.password,
-                    email: e.email,
-                    icon: e.icon,
-                    docId: e.id,
-                    websiteName: e.websiteName,
-                  ),
+        final list = controller.passwordsList;
+        var searchedList = list.value;
+
+        //search logic
+        if (searchText.isNotEmpty) {
+          searchedList = list.where((p) {
+            final searchLower = searchText.toLowerCase();
+            final websiteNameLower = p.value.websiteName.toLowerCase();
+            if (websiteNameLower.startsWith(searchLower)) {
+              return true;
+            }
+            return false;
+          }).toList();
+        }
+
+        return searchedList.isEmpty && searchText.isNotEmpty
+            ? const Center(
+                child: Text(
+                  'There is no results',
+                  style: TextStyle(fontSize: 20),
                 ),
               )
-              .toList(),
-        );
+            : ListView(
+                padding: const EdgeInsets.all(8.0),
+                children: searchedList
+                    .map(
+                      (e) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: PasswordTile(
+                          docId: e.value.id,
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
       },
     );
   }

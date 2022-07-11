@@ -1,5 +1,7 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:password_manager/api/firebase_api.dart';
 import '../helpers/colors.dart';
@@ -13,16 +15,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    makeStatusBarTransparent();
-
-    //TODO calculate how many passwords are the same
+    log(FirebaseAuth.instance.currentUser!.emailVerified.toString());
     //TODO calculate how many passwords are weak
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height - 60),
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 60),
           child: Column(
             children: [
               Padding(
@@ -34,6 +32,7 @@ class HomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
                           'Welcome',
@@ -44,10 +43,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                         FutureBuilder(
                           future: FirebaseApi.getUsername(),
-                          builder:
-                              (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
+                          builder: (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
                               return const Text('');
                             }
 
@@ -72,7 +69,7 @@ class HomeScreen extends StatelessWidget {
               const PasswordsAnalytics(),
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.only(left: 25.0, right: 25, top: 40),
+                padding: const EdgeInsets.only(left: 25.0, right: 25, top: 30),
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
@@ -84,7 +81,7 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       children: const [
                         Text(
-                          'Your Passwords',
+                          'Your Categories',
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -107,12 +104,5 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void makeStatusBarTransparent() {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-    ));
   }
 }

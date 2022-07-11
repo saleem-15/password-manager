@@ -25,7 +25,8 @@ class CategoriesList extends StatelessWidget {
                 )
                 .toList(),
             Padding(
-              padding: const EdgeInsets.only(left: 6),
+              padding: EdgeInsets.only(
+                  left: controller.categoriesList.isEmpty ? 12 : 6),
               child: InkWell(
                 onTap: () {
                   Get.to(() => const AddNewCategory());
